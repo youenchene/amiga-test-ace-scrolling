@@ -52,7 +52,7 @@ static void loadMap(void) {
 	tileReset();
 
 	systemUse();
-	tFile *pFileTilemap = fileOpen("data/W1L1.dat", "rb");
+	tFile *pFileTilemap = fileOpenFromPath("data/W1L1.dat", "rb");
 	fileRead(pFileTilemap, &s_uwMapTileWidth, sizeof(s_uwMapTileWidth));
 	fileRead(pFileTilemap, &s_uwMapTileHeight, sizeof(s_uwMapTileHeight));
 
