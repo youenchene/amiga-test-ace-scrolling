@@ -9,7 +9,7 @@
 #include <ace/types.h>
 #include <ace/utils/extview.h>
 #include <ace/managers/viewport/camera.h>
-#include <ace/utils/file.h>
+#include <ace/utils/disk_file.h>
 
 
 #define TILE_MAP_SIZE_X 300
@@ -49,27 +49,36 @@ void tileSetAttribute(UWORD uwTileX, UWORD uwTileY, UBYTE ubAttribute) {
 }
 
 static void loadMap(void) {
+	 logWrite("Map Loading!\n");
 	tileReset();
 
 	systemUse();
-	tFile *pFileTilemap = fileOpenFromPath("data/W1L1.dat", "rb");
+	tFile *pFileTilemap = diskFileOpen("data/W1L1.dat", "rb");
 	fileRead(pFileTilemap, &s_uwMapTileWidth, sizeof(s_uwMapTileWidth));
 	fileRead(pFileTilemap, &s_uwMapTileHeight, sizeof(s_uwMapTileHeight));
 
-  logWrite("sizeof(s_uwMapTileWidth)");
-  //logWrite(sizeof(s_uwMapTileWidth));
+  	logWrite("s_uwMapTileWidth %u",s_uwMapTileWidth);
+
+  	logWrite("s_uwMapTileHeight %u",s_uwMapTileHeight);
+  
 
 	for(UWORD y = 0; y < s_uwMapTileHeight; ++y) {
-		for(UWORD x = 0; x < s_uwMapTileWidth; ++x) {
+		for(UWORD x = 0; x < TILE_MAP_SIZE_X; ++x) {
 			UBYTE uwTileData;
 			fileRead(pFileTilemap, &uwTileData, sizeof(uwTileData));
+			logWrite("X %u Y %u Value %u\n",x,y,uwTileData);
 			s_pMainBuffer->pTileData[x][y] = uwTileData;
+			logWrite("Main Buffer Done\n");
 			tileSetAttribute(x, y, uwTileData);
+			logWrite("Map Done\n");
 		}
 	}
 	fileClose(pFileTilemap);
 
+	logWrite("Map Loaded!\n");
+
 	systemUnuse();
+	logWrite("Camera Reset\n");
 	cameraReset(s_pMainBuffer->pCamera, 0, 0, s_uwMapTileWidth*16, s_uwMapTileHeight * 16, 1);
 }
 
@@ -96,13 +105,15 @@ void gameGsCreate(void) {
 
   s_pTiles = bitmapCreateFromPath("data/W1-Sheet.bm", 0);
 
-	g_pMainBuffer = tileBufferCreate(0,
+  logWrite("Tiles Loaded!\n");
+
+  g_pMainBuffer = tileBufferCreate(0,
 		TAG_TILEBUFFER_VPORT, s_pVpMain,
 		TAG_TILEBUFFER_BITMAP_FLAGS, BMF_CLEAR | BMF_INTERLEAVED,
 		TAG_TILEBUFFER_BOUND_TILE_X, TILE_MAP_SIZE_X,
 		TAG_TILEBUFFER_BOUND_TILE_Y, TILE_MAP_SIZE_Y,
 		TAG_TILEBUFFER_IS_DBLBUF, 1,
-		TAG_TILEBUFFER_TILE_SHIFT, 4,
+		TAG_TILEBUFFER_TILE_SHIFT, 4, //Size of tile, given in bitshift. Set to 4 for 16px, 5 for 32px, etc. Mandatory.
 		TAG_TILEBUFFER_REDRAW_QUEUE_LENGTH, 100,
 		TAG_TILEBUFFER_CALLBACK_TILE_DRAW, onTileDraw,
 		TAG_TILEBUFFER_TILESET, s_pTiles,
@@ -121,6 +132,7 @@ void gameGsCreate(void) {
 void gameGsLoop(void) {
   // This will loop every frame
   if(keyCheck(KEY_ESCAPE)) {
+	logWrite("Existing!\n");
     gameExit();
     return;
   }
