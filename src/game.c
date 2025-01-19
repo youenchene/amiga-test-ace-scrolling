@@ -52,68 +52,36 @@ static void onTileDraw(
 ) {
 }
 
-void tileReset(void) {
-	for(UWORD ubX = 0; ubX < TILE_MAP_SIZE_X; ++ubX) {
-		for(UWORD ubY = 0; ubY < TILE_MAP_SIZE_Y; ++ubY) {
-			//s_pAttributeMap[ubX][ubY] = 0;
-		}
-	}
-}
-
 void tileSetAttribute(UWORD uwTileX, UWORD uwTileY, UBYTE ubAttribute) {
 	//s_pAttributeMap[uwTileX][uwTileY] = ubAttribute;
 }
 
 static void loadMapFake(void) {
 	logWrite("Map Loading!\n");
-	tileReset();
-
 	randInit(&g_sRand, 2184, 1911);
-
 	for(UWORD y = 0; y < TILE_MAP_SIZE_Y; ++y) {
 		for(UWORD x = 0; x < TILE_MAP_SIZE_X; ++x) {
-			//logWrite("X %u Y %u Value %u\n",x,y,ubTileData);
 			s_pMainBuffer->pTileData[x][y] = randUwMax(&g_sRand,170);
-			//logWrite("Main Buffer Done\n");
-			//tileSetAttribute(x, y, ubTileData);
-			//logWrite("Map Done\n");
 		}
 	}
-
 	logWrite("Map Loaded!\n");
 }
 
 
 static void loadMap(void) {
-	logWrite("Map Loading!\n");
-	tileReset();
-
+	logWrite("Map Loading...\n");
 	tFile *pFileTilemap = diskFileOpen("data/W1L1.dat", "rb");
 	fileRead(pFileTilemap, &s_uwMapTileWidth, sizeof(s_uwMapTileWidth));
 	fileRead(pFileTilemap, &s_uwMapTileHeight, sizeof(s_uwMapTileHeight));
-
-  	logWrite("s_uwMapTileWidth %u",s_uwMapTileWidth);
-
-  	logWrite("s_uwMapTileHeight %u",s_uwMapTileHeight);
-  
-	//fileRead(pFileTilemap, s_pMainBuffer->pTileData, sizeof(UBYTE) * s_uwMapTileWidth * s_uwMapTileHeight);
-
-	UBYTE ubTileData;
-	for(UWORD y = 0; y < s_uwMapTileHeight; ++y) {
-		for(UWORD x = 0; x < s_uwMapTileWidth; ++x) {
-			fileRead(pFileTilemap, &ubTileData, sizeof(ubTileData));
-			//logWrite("X %u Y %u Value %u\n",x,y,ubTileData);
-			s_pMainBuffer->pTileData[x][y] = ubTileData;
-			//logWrite("Main Buffer Done\n");
-			//tileSetAttribute(x, y, ubTileData);
-			//logWrite("Map Done\n");
-		}
-	}
-	
-	fileClose(pFileTilemap);
-
+	s_uwMapTileWidth++;
+	s_uwMapTileHeight++;
+  	logWrite("Map Width %u",s_uwMapTileWidth);
+  	logWrite("Map Height %u",s_uwMapTileHeight);
+	for (int x = 0; x < s_uwMapTileWidth; x++) {
+        fileRead(pFileTilemap, s_pMainBuffer->pTileData[x], s_uwMapTileHeight);
+    }
+	fileClose(pFileTilemap); 
 	logWrite("Map Loaded!\n");
-	
 }
 
 
