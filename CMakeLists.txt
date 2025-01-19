@@ -17,7 +17,7 @@ include_directories(${PROJECT_SOURCE_DIR}/src)
 
 # Debugging flag exposed via CMake specifically for your game code
 if(GAME_DEBUG)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DGAME_DEBUG -DACE_DEBUG=ON -DACE_DEBUG_UAE=ON")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DGAME_DEBUG")
 endif()
 
 
@@ -25,6 +25,8 @@ set(RES_DIR ${CMAKE_CURRENT_LIST_DIR}/res)
 set(DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/data)
 
 # ACE
+set(ACE_DEBUG ON)
+set(ACE_DEBUG_UAE ON)
 add_subdirectory(deps/ace ace)
 include_directories(deps/ace/include)
 # If you built standalone and installed ACE, use following instead:
@@ -55,15 +57,17 @@ target_link_libraries(${GAME_LINKED} ace)
 
 # Create directory for converted files next to built executable
 file(MAKE_DIRECTORY ${DATA_DIR})
+file(MAKE_DIRECTORY ${DATA_DIR}/fonts)
 
 # Convert palette and background image
 convertPalette(${GAME_LINKED} ${RES_DIR}/supergre.gpl ${DATA_DIR}/supergre.plt)
 convertBitmaps(
   TARGET ${GAME_LINKED} PALETTE ${RES_DIR}/supergre.gpl
-  SOURCES ${RES_DIR}/W1-Sheet.png
+  INTERLEAVED SOURCES ${RES_DIR}/W1-Sheet.png
   DESTINATIONS ${DATA_DIR}/W1-Sheet.bm
 )
 
 file(COPY ${RES_DIR}/W1L1.dat DESTINATION ${DATA_DIR})
+file(COPY ${RES_DIR}/fonts/silkscreen.fnt DESTINATION ${DATA_DIR}/fonts)
 
 
