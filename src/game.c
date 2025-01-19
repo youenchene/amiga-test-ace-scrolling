@@ -81,9 +81,6 @@ static void loadMapFake(void) {
 	}
 
 	logWrite("Map Loaded!\n");
-
-	logWrite("Camera Reset\n");
-	cameraReset(s_pMainBuffer->pCamera, 0, 0, s_uwMapTileWidth*16, s_uwMapTileHeight * 16, 1);
 }
 
 
@@ -91,7 +88,6 @@ static void loadMap(void) {
 	logWrite("Map Loading!\n");
 	tileReset();
 
-	systemUse();
 	tFile *pFileTilemap = diskFileOpen("data/W1L1.dat", "rb");
 	fileRead(pFileTilemap, &s_uwMapTileWidth, sizeof(s_uwMapTileWidth));
 	fileRead(pFileTilemap, &s_uwMapTileHeight, sizeof(s_uwMapTileHeight));
@@ -100,9 +96,9 @@ static void loadMap(void) {
 
   	logWrite("s_uwMapTileHeight %u",s_uwMapTileHeight);
   
-	fileRead(pFileTilemap, s_pMainBuffer->pTileData, sizeof(UBYTE) * s_uwMapTileWidth * s_uwMapTileHeight);
+	//fileRead(pFileTilemap, s_pMainBuffer->pTileData, sizeof(UBYTE) * s_uwMapTileWidth * s_uwMapTileHeight);
 
-	/*UBYTE ubTileData;
+	UBYTE ubTileData;
 	for(UWORD y = 0; y < s_uwMapTileHeight; ++y) {
 		for(UWORD x = 0; x < s_uwMapTileWidth; ++x) {
 			fileRead(pFileTilemap, &ubTileData, sizeof(ubTileData));
@@ -112,15 +108,11 @@ static void loadMap(void) {
 			//tileSetAttribute(x, y, ubTileData);
 			//logWrite("Map Done\n");
 		}
-	}*/
+	}
+	
 	fileClose(pFileTilemap);
 
 	logWrite("Map Loaded!\n");
-
-	systemUnuse();
-	logWrite("Camera Reset\n");
-	cameraReset(s_pMainBuffer->pCamera, 0, 0, s_uwMapTileWidth*16, s_uwMapTileHeight * 16, 1);
-
 	
 }
 
@@ -172,10 +164,14 @@ void gameGsCreate(void) {
 	s_pFont = fontCreateFromPath("data/fonts/silkscreen.fnt");
 	s_pTextBitMap = fontCreateTextBitMap(320, s_pFont->uwHeight);
 
-	//loadMap();
-	loadMapFake();
+	loadMap();
+	//loadMapFake();
 
 	systemUnuse();
+
+
+	logWrite("Camera Reset\n");
+	cameraReset(s_pMainBuffer->pCamera, 0, 0, s_uwMapTileWidth*16, s_uwMapTileHeight * 16, 1);
 
 	tileBufferRedrawAll(s_pMainBuffer);
 
