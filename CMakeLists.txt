@@ -60,14 +60,14 @@ file(MAKE_DIRECTORY ${DATA_DIR})
 file(MAKE_DIRECTORY ${DATA_DIR}/fonts)
 
 # Convert palette and background image
-convertPalette(${GAME_LINKED} ${RES_DIR}/supergre.gpl ${DATA_DIR}/supergre.plt)
+convertPalette(${GAME_LINKED} ${RES_DIR}/overworld.gpl ${DATA_DIR}/overworld.plt)
 convertBitmaps(
-  TARGET ${GAME_LINKED} PALETTE ${RES_DIR}/supergre.gpl
-  INTERLEAVED SOURCES ${RES_DIR}/W1-Sheet.png
-  DESTINATIONS ${DATA_DIR}/W1-Sheet.bm
+  TARGET ${GAME_LINKED} PALETTE ${RES_DIR}/overworld.gpl
+  INTERLEAVED SOURCES ${RES_DIR}/overworld.png
+  DESTINATIONS ${DATA_DIR}/overworld.bm
 )
 
-file(COPY ${RES_DIR}/W1L1.dat DESTINATION ${DATA_DIR})
+file(COPY ${RES_DIR}/overworld.dat DESTINATION ${DATA_DIR})
 file(COPY ${RES_DIR}/fonts/silkscreen.fnt DESTINATION ${DATA_DIR}/fonts)
 
 

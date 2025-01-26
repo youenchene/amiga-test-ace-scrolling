@@ -15,9 +15,8 @@
 #include <ace/utils/font.h>
 
 
-#define TILE_MAP_SIZE_X 300
-#define TILE_MAP_SIZE_Y 46
-#define TILESET_TILE_COUNT 255
+#define TILE_MAP_SIZE_X 200
+#define TILE_MAP_SIZE_Y 80
 #define GAME_BPP 5
 #define SCORE_HEIGHT 16
 
@@ -61,7 +60,7 @@ static void loadMapFake(void) {
 	randInit(&g_sRand, 2184, 1911);
 	for(UWORD y = 0; y < TILE_MAP_SIZE_Y; ++y) {
 		for(UWORD x = 0; x < TILE_MAP_SIZE_X; ++x) {
-			s_pMainBuffer->pTileData[x][y] = randUwMax(&g_sRand,170);
+			s_pMainBuffer->pTileData[x][y] = randUwMax(&g_sRand,150);
 		}
 	}
 	logWrite("Map Loaded!\n");
@@ -70,7 +69,7 @@ static void loadMapFake(void) {
 
 static void loadMap(void) {
 	logWrite("Map Loading...\n");
-	tFile *pFileTilemap = diskFileOpen("data/W1L1.dat", "rb");
+	tFile *pFileTilemap = diskFileOpen("data/overworld.dat", "rb");
 	fileRead(pFileTilemap, &s_uwMapTileWidth, sizeof(s_uwMapTileWidth));
 	fileRead(pFileTilemap, &s_uwMapTileHeight, sizeof(s_uwMapTileHeight));
 	s_uwMapTileWidth++;
@@ -78,6 +77,7 @@ static void loadMap(void) {
   	logWrite("Map Width %u",s_uwMapTileWidth);
   	logWrite("Map Height %u",s_uwMapTileHeight);
 	for (int x = 0; x < s_uwMapTileWidth; x++) {
+		logWrite("Column %u",x);
         fileRead(pFileTilemap, s_pMainBuffer->pTileData[x], s_uwMapTileHeight);
     }
 	fileClose(pFileTilemap); 
@@ -108,7 +108,7 @@ void gameGsCreate(void) {
 		TAG_VPORT_BPP, GAME_BPP,
 	TAG_END);
 
-	s_pTiles = bitmapCreateFromPath("data/W1-Sheet.bm", 0);
+	s_pTiles = bitmapCreateFromPath("data/overworld.bm", 0);
 
 	logWrite("Tiles Loaded!\n");
 
@@ -124,7 +124,7 @@ void gameGsCreate(void) {
 		TAG_TILEBUFFER_TILESET, s_pTiles,
 	TAG_END);
 
-  	paletteLoadFromPath("data/supergre.plt", s_pPalette, 1 << GAME_BPP);
+  	paletteLoadFromPath("data/overworld.plt", s_pPalette, 1 << GAME_BPP);
 	memcpy(s_pVpScore->pPalette, s_pPalette, sizeof(s_pVpScore->pPalette));
 	memcpy(s_pVpMain->pPalette, s_pPalette, sizeof(s_pVpMain->pPalette));
 
